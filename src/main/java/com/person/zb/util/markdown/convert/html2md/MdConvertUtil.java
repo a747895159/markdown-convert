@@ -140,18 +140,16 @@ public class MdConvertUtil {
         return result.toString().replaceAll("\\[]\\(\\)", "");
     }
 
-    private static String getCodeContent(Element element) {
-        String s = element.toString();
-        String s1 = s.replaceAll("</span>", "");
-        s1 = s1.replaceAll("<pre>", "");
-        s1 = s1.replaceAll("</pre>", "");
-        s1 = s1.replaceAll("<span>", "");
-        s1 = s1.replaceAll("</code>", "");
-        s1 = s1.replaceAll("<code>", "");
-        s1 = s1.replaceAll("<code class=\"(\\S|\\s)*?\">", "");
-        s1 = s1.replaceAll("</code>", "");
-        s1 = s1.replaceAll("<span class=\"(\\S|\\s)*?\">", "");
-//        s1 = s1.replaceAll("<!--(\\S|\\s)*?-->", "");
+    public static String getCodeContent(Element element) {
+        String s1;
+        //bilibili特殊取值方式
+        if (StringUtils.isNotBlank(element.attr("codecontent"))) {
+            s1 = element.attr("codecontent");
+        } else {
+            //通用替换方式
+            s1 = element.toString().replaceAll("<.*?>", "");
+        }
+
         s1 = s1.replaceAll("<!-- -->", "");
         s1 = s1.replaceAll("&lt;", "<");
         s1 = s1.replaceAll("&gt;", ">");
@@ -159,7 +157,7 @@ public class MdConvertUtil {
         String[] split = s1.split("\n");
         for (String s2 : split) {
             String temp = s2.trim();
-            if (!temp.equals("")) {
+            if (StringUtils.isNotBlank(temp)) {
                 sb.append(s2).append("\n");
             }
         }
@@ -197,7 +195,6 @@ public class MdConvertUtil {
         } else if (tagName.equals("li")) {
             li(element, lines);
         } else if (tagName.equals("pre")) {
-            // 个人添加
             code(element, lines);
         } else if (tagName.equals("thead")) {
             thead(element, lines);
@@ -391,6 +388,9 @@ public class MdConvertUtil {
         line.append("]");
         line.append("(");
         String url = element.attr("src");
+        if (StringUtils.isBlank(url)) {
+            url = element.attr("data-src");
+        }
         line.append(url);
         String title = element.attr("title");
         if (!title.equals("")) {

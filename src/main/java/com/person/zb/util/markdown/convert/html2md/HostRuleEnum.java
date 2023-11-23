@@ -9,22 +9,22 @@ import java.util.Arrays;
 @AllArgsConstructor
 public enum HostRuleEnum {
 
-    //CSDN
+    /**
+     *
+     */
     CSDN("blog.csdn.net", EleTagEnum.ID, "article_content", true, "-CSDN博客"),
 
-    //博客园
     CNBLOG("cnblogs.com", EleTagEnum.ID, "post_detail", true, " - 博客园"),
 
     //微信
     WECHAT("mp.weixin.qq.com", EleTagEnum.ID, "img-content", true, null),
 
-    //51CTO
     CTO_51("blog.51cto.com", EleTagEnum.ID, "markdownContent", true, "_51CTO博客"),
 
-    /**
-     * 暂不支持, 需要抓取异步返回数据
-     */
-    BILIBILI("bilibili.com/", EleTagEnum.CSS, "article-container", true, null),
+    BILIBILI("bilibili.com", EleTagEnum.CSS, "article-content", true, " - 哔哩哔哩"),
+
+    JS("jianshu.com", EleTagEnum.CSS, "article-content", true, " - 简书"),
+
 
     UNKNOWN("UNKNOWN", null, "body", true, null),
 

@@ -23,11 +23,12 @@ public class H2MRun01 {
          * https://mp.weixin.qq.com/s/bExjRkVbDLTV2Wf9G6dzrg
          *
          * https://blog.51cto.com/u_5634409/2343489
-         *
+         * https://www.bilibili.com/read/cv17358778/?from=search&spm_id_from=333.337.0.0
+         * https://www.jianshu.com/p/1c16195e9a1b
          * 异步文章 暂不支持
          * https://segmentfault.com/a/1190000018835760
          */
-        MutablePair<String, String> convert = URL2MdHandler.parseHtml("https://blog.csdn.net/apple_53947466/article/details/125720937","");
+        MutablePair<String, String> convert = URL2MdHandler.parseHtml("https://www.jianshu.com/p/1c16195e9a1b","");
         String title = convert.getLeft();
         String value = convert.getRight();
         IOUtils.write(value, new FileOutputStream("D:\\data\\" + title + ".md"), "utf-8");
