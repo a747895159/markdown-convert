@@ -24,20 +24,35 @@ public enum HostRuleEnum {
     /**
      * 暂不支持, 需要抓取异步返回数据
      */
-    BILIBILI("https://www.bilibili.com/", EleTagEnum.CSS, "article-container", true, null),
+    BILIBILI("bilibili.com/", EleTagEnum.CSS, "article-container", true, null),
 
     UNKNOWN("UNKNOWN", null, "body", true, null),
 
     ;
 
+    /**
+     * host域名
+     */
     private String host;
 
+    /**
+     * 元素类型
+     */
     private EleTagEnum eleTag;
 
+    /**
+     * 元素值
+     */
     private String eleTagVal;
 
+    /**
+     * 页面内容 同步/异步标识，暂不支持异步方式
+     */
     private Boolean syncFlag;
 
+    /**
+     * 标题名分割串
+     */
     private String titleSplit;
 
 

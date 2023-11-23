@@ -17,13 +17,18 @@ public class URL2MdHandler {
 
     public static final String CATALOG = "## 文章目录";
 
-
+    /**
+     * 根据URL规则进行解析
+     */
     public static MutablePair<String, String> parseHtml(String url) {
         HostRuleEnum ruleEnum = HostRuleEnum.findHost(url);
         return parseRemoteUrlHtml(url, ruleEnum, null);
 
     }
 
+    /**
+     * 根据元素Id进行解析，若为空时，按照url方式解析
+     */
     public static MutablePair<String, String> parseHtml(String url, String eleId) {
         HostRuleEnum ruleEnum = HostRuleEnum.findHost(url);
         return parseRemoteUrlHtml(url, ruleEnum, eleId);
