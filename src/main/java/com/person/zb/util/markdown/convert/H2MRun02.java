@@ -1,7 +1,7 @@
 package com.person.zb.util.markdown.convert;
 
 
-import com.person.zb.util.markdown.convert.html2md.util.MdConvertUtil;
+import com.person.zb.util.markdown.convert.html2md.MdConvertUtil;
 import org.apache.commons.io.IOUtils;
 
 import java.io.FileOutputStream;
