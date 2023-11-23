@@ -9,7 +9,7 @@ import java.io.FileOutputStream;
 /**
  * @author : ZhouBin
  */
-public class Run02 {
+public class H2MRun02 {
 
     public static void main(String[] args) throws Exception {
 

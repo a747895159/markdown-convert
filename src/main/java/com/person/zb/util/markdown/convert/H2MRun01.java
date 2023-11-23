@@ -11,7 +11,7 @@ import java.io.FileOutputStream;
 /**
  * @author : ZhouBin
  */
-public class Run01 {
+public class H2MRun01 {
 
     public static void main(String[] args) throws Exception {
         /**
