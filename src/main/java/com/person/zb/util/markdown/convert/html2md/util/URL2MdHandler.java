@@ -1,15 +1,14 @@
 package com.person.zb.util.markdown.convert.html2md.util;
 
 
-import com.person.zb.util.markdown.convert.html2md.impl.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * @author : ZhouBin
@@ -18,43 +17,41 @@ public class URL2MdHandler {
 
     public static final String CATALOG = "## 文章目录";
 
-    private static List<HTMLParse> list = new ArrayList<>(8);
 
-    static {
-        BkyHtmlParse bky = new BkyHtmlParse();
-        list.add(bky);
-        CSDNHtmlParse csdn = new CSDNHtmlParse();
-        list.add(csdn);
-        WechatParseContent wechat = new WechatParseContent();
-        list.add(wechat);
+    public static MutablePair<String, String> parseHtml(String url) {
+        HostRuleEnum ruleEnum = HostRuleEnum.findHost(url);
+        return parseRemoteUrlHtml(url, ruleEnum, null);
 
     }
 
-    public static MutablePair<String, String> parse(String url) {
-        HTMLParse htmlContent = new DefaultHtmlParse();
-        for (HTMLParse h : list) {
-            if (url.contains(h.getHost())) {
-                htmlContent = h;
-                break;
-            }
-        }
-        return pair(url, htmlContent, null);
+    public static MutablePair<String, String> parseHtml(String url, String eleId) {
+        HostRuleEnum ruleEnum = HostRuleEnum.findHost(url);
+        return parseRemoteUrlHtml(url, ruleEnum, eleId);
     }
 
-    public static MutablePair<String, String> parseById(String url, String eleId) {
-        IdHtmlParse htmlContent = new IdHtmlParse();
-        return pair(url, htmlContent, eleId);
-    }
-
-    private static MutablePair<String, String> pair(String url, HTMLParse htmlParse, String eleId) {
+    private static MutablePair<String, String> parseRemoteUrlHtml(String url, HostRuleEnum ruleEnum, String eleId) {
         try {
             MutablePair<String, String> pair = new MutablePair<>();
             // 获取正文内容，
             Document doc = Jsoup.parse(new URL(url), 5000);
-            String title = htmlParse.getTitle(doc);
+            String title;
+            Element ele;
+            if (StringUtils.isNotBlank(eleId)) {
+                title = MdConvertUtil.fetchTitle(doc);
+                ele = doc.getElementById(eleId);
+            } else {
+                title = getTitle(doc, ruleEnum.getTitleSplit());
+                if (Objects.equals(EleTagEnum.ID, ruleEnum.getEleTag())) {
+                    ele = doc.getElementById(ruleEnum.getEleTagVal());
+                } else if (Objects.equals(EleTagEnum.CSS, ruleEnum.getEleTag())) {
+                    ele = doc.select("." + ruleEnum.getEleTagVal()).get(0);
+                } else {
+                    ele = doc.getElementsByTag(ruleEnum.getEleTagVal()).get(0);
+                }
+                handlerWebSite(ruleEnum, ele);
+            }
             //获取正文内容元素
-            Element parse = htmlParse.parse(doc, eleId);
-            String content = MdConvertUtil.getTextContent(parse);
+            String content = MdConvertUtil.getTextContent(ele);
             if (content.contains(CATALOG)) {
                 String[] split = content.split(CATALOG);
                 content = CATALOG + "\n[TOC]\n" + split[1];
@@ -66,6 +63,40 @@ public class URL2MdHandler {
             return pair;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+
+    public static String getTitle(Document doc, String titleSplit) {
+        String title = MdConvertUtil.fetchTitle(doc);
+        if (StringUtils.isNotBlank(title) && StringUtils.isNotBlank(titleSplit)) {
+            return title.split(titleSplit)[0];
+        }
+        return title;
+    }
+
+    private static void handlerWebSite(HostRuleEnum ruleEnum, Element ele) {
+        if (ruleEnum == null) {
+            return;
+        }
+        switch (ruleEnum) {
+            case CSDN:
+                ele.getElementsByTag("script").remove();
+                ele.select(".dp-highlighter").remove();
+                break;
+            case CNBLOG:
+                ele.getElementsByTag("script").remove();
+                break;
+            case WECHAT:
+                ele.getElementsByTag("script").remove();
+                // 图片标签显示
+                long count = ele.getElementsByTag("img").stream().peek(e -> e.attr("src", e.attr("data-src"))).count();
+                System.out.println("共计 " + count + " 张图片被处理");
+                // 正文内容展示
+                ele.getElementById("js_content").attr("style", "visibility");
+                break;
+            default:
+
         }
     }
 
