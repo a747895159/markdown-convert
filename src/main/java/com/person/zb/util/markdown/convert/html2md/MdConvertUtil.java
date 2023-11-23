@@ -369,7 +369,7 @@ public class MdConvertUtil {
         if (StringUtils.isBlank(url)) {
             url = element.attr("data-original-src");
         }
-        if (!url.startsWith("http")) {
+        if (StringUtils.isNotBlank(url) && !url.startsWith("http")) {
             url = "https:" + url;
         }
         line.append(url);

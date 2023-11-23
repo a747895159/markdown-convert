@@ -40,14 +40,24 @@ public class URL2MdHandler {
             // 获取正文内容，
             Document doc = Jsoup.parse(new URL(url), 5000);
             String title;
-            Element ele;
+            Element ele = null;
             if (StringUtils.isNotBlank(eleId)) {
                 title = MdConvertUtil.fetchTitle(doc);
                 ele = doc.getElementById(eleId);
             } else {
                 title = getTitle(doc, ruleEnum.getTitleSplit());
                 if (Objects.equals(EleTagEnum.ID, ruleEnum.getEleTag())) {
-                    ele = doc.getElementById(ruleEnum.getEleTagVal());
+                    String[] str1 = ruleEnum.getEleTagVal().split("\\|");
+                    if (str1.length > 1) {
+                        for (String s : str1) {
+                            ele = doc.getElementById(s);
+                            if (ele != null) {
+                                break;
+                            }
+                        }
+                    } else {
+                        ele = doc.getElementById(ruleEnum.getEleTagVal());
+                    }
                 } else if (Objects.equals(EleTagEnum.CSS, ruleEnum.getEleTag())) {
                     ele = doc.select("." + ruleEnum.getEleTagVal()).get(0);
                 } else if (Objects.equals(EleTagEnum.TAG, ruleEnum.getEleTag())) {
@@ -97,14 +107,20 @@ public class URL2MdHandler {
             case WECHAT:
                 ele.getElementsByTag("script").remove();
                 // 图片标签显示
-                long count = ele.getElementsByTag("img").stream().peek(e -> e.attr("src", e.attr("data-src"))).count();
-                System.out.println("共计 " + count + " 张图片被处理");
+                ele.getElementsByTag("img").forEach(e -> e.attr("src", e.attr("data-src")));
                 // 正文内容展示
                 ele.getElementById("js_content").attr("style", "visibility");
+                break;
+            case BILIBILI:
+                ele.getElementsByTag("img").forEach(e -> e.attr("src", e.attr("data-src")));
+                break;
+            case JS:
+                ele.getElementsByTag("img").forEach(e -> e.attr("src", e.attr("data-original-src")));
                 break;
             default:
 
         }
+
     }
 
 
