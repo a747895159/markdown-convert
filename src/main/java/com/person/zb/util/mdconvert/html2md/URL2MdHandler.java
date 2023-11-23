@@ -1,11 +1,15 @@
-package com.person.zb.util.markdown.convert.html2md;
+package com.person.zb.util.mdconvert.html2md;
 
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.net.URL;
 import java.util.Objects;
@@ -38,7 +42,15 @@ public class URL2MdHandler {
         try {
             MutablePair<String, String> pair = new MutablePair<>();
             // 获取正文内容，
-            Document doc = Jsoup.parse(new URL(url), 5000);
+            Document doc = null;
+            if (BooleanUtils.isTrue(ruleEnum.getSyncFlag())) {
+                // 获取正文内容，
+                doc = Jsoup.parse(new URL(url), 5000);
+            } else {
+                //异步方式获取内容
+                doc = asyncHtml(url);
+            }
+
             String title;
             Element ele = null;
             if (StringUtils.isNotBlank(eleId)) {
@@ -76,7 +88,7 @@ public class URL2MdHandler {
             content += "\n \n \n [原文地址](" + url + ") ";
 
             pair.setRight(content);
-            pair.setLeft(title.replaceAll("\\\\","").replaceAll("/",""));
+            pair.setLeft(title.replaceAll("\\\\", "").replaceAll("/", ""));
             return pair;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -126,5 +138,22 @@ public class URL2MdHandler {
 
     }
 
+
+    private static Document asyncHtml(String url) throws Exception {
+        System.setProperty("webdriver.chrome.driver", "D:\\develop\\Tools\\chromedriver.exe");
+        //引入谷歌驱动
+        ChromeOptions options = new ChromeOptions();
+        //允许所有请求
+        options.addArguments("--remote-allow-origins=*");
+        WebDriver webDriver = new ChromeDriver(options);
+        //启动需要打开的网页
+        webDriver.get(url);
+        //程序暂停5秒
+        Thread.sleep(5000);
+        String pageSource = webDriver.getPageSource();
+        Document parse = Jsoup.parse(pageSource);
+        webDriver.close();
+        return parse;
+    }
 
 }

@@ -85,39 +85,30 @@
             <version>4.1.19</version>
         </dependency>
 
-
-
-
-
-
-       <!-- <dependency>
-            <groupId>org.pegdown</groupId>
-            <artifactId>pegdown</artifactId>
-            <version>1.4.2</version>
-        </dependency>-->
-       <!-- <dependency>
-            <groupId>com.vladsch.flexmark</groupId>
-            <artifactId>flexmark-html2md-converter</artifactId>
-            <version>0.62.2</version>
-        </dependency>-->
         <!-- selenium的依赖 -->
-       <!-- <dependency>
+        <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>3.141.59</version>
-        </dependency>-->
+        </dependency>
         <!-- chrome-driver依赖，使用那个浏览器添加那个浏览器即可 谷歌驱动 -->
-        <!--<dependency>
+        <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-chrome-driver</artifactId>
             <version>3.141.59</version>
-        </dependency>-->
-        <!-- firefox-driver依赖，使用那个浏览器添加那个浏览器即可 火狐驱动 -->
-        <!--<dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-firefox-driver</artifactId>
-            <version>3.141.59</version>
-        </dependency>-->
+        </dependency>
+
+
+        <!-- <dependency>
+             <groupId>org.pegdown</groupId>
+             <artifactId>pegdown</artifactId>
+             <version>1.4.2</version>
+         </dependency>-->
+        <!-- <dependency>
+             <groupId>com.vladsch.flexmark</groupId>
+             <artifactId>flexmark-html2md-converter</artifactId>
+             <version>0.62.2</version>
+         </dependency>-->
 
 
     </dependencies>

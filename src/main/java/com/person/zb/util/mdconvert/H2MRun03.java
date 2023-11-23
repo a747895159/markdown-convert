@@ -1,14 +1,15 @@
-package com.person.zb.util.markdown.convert;
+package com.person.zb.util.mdconvert;
 
 
-
-import com.person.zb.util.markdown.convert.html2md.URL2MdHandler;
+import com.person.zb.util.mdconvert.html2md.URL2MdHandler;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.io.FileOutputStream;
 
 /**
+ * 异步-selenium方式获取页面内容
+ *
  * @author : ZhouBin
  */
 public class H2MRun03 {
@@ -16,11 +17,11 @@ public class H2MRun03 {
     public static void main(String[] args) throws Exception {
         /*
          *
-         * 异步文章 暂不支持
+         * 异步文章
          * https://segmentfault.com/a/1190000018835760
-         * https://www.mdnice.com/writing/892151db7a314d12bf636a4e6b7dfd5d
+         * https://www.mdnice.com/writing/2a53472ff62e47e78f4d8dc005e91be1
          */
-        MutablePair<String, String> convert = URL2MdHandler.parseHtml("https://www.mdnice.com/writing/892151db7a314d12bf636a4e6b7dfd5d","");
+        MutablePair<String, String> convert = URL2MdHandler.parseHtml("https://segmentfault.com/a/1190000018835760", "");
         String title = convert.getLeft();
         String value = convert.getRight();
         IOUtils.write(value, new FileOutputStream("D:\\data\\" + title + ".md"), "utf-8");

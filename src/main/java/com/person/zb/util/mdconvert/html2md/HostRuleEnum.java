@@ -1,4 +1,4 @@
-package com.person.zb.util.markdown.convert.html2md;
+package com.person.zb.util.mdconvert.html2md;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,35 +26,38 @@ public enum HostRuleEnum {
 
     JS("jianshu.com", EleTagEnum.TAG, "article", true, " - 简书"),
 
-
     UNKNOWN("UNKNOWN", null, "body", true, null),
+
+    MDNICE("mdnice.com", EleTagEnum.ID, "writing-content", false, " - mdnice 墨滴"),
+
+    SF("segmentfault.com", EleTagEnum.TAG, "article", false, " - SegmentFault 思否"),
 
     ;
 
     /**
      * host域名
      */
-    private String host;
+    private final String host;
 
     /**
      * 元素类型
      */
-    private EleTagEnum eleTag;
+    private final EleTagEnum eleTag;
 
     /**
      * 元素值
      */
-    private String eleTagVal;
+    private final String eleTagVal;
 
     /**
-     * 页面内容 同步/异步标识，暂不支持异步方式
+     * 页面内容 同步/异步标识
      */
-    private Boolean syncFlag;
+    private final Boolean syncFlag;
 
     /**
      * 标题名分割串
      */
-    private String titleSplit;
+    private final String titleSplit;
 
 
     public static HostRuleEnum findHost(String url) {
