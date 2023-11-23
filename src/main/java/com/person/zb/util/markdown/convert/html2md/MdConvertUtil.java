@@ -141,12 +141,14 @@ public class MdConvertUtil {
             s1 = element.attr("codecontent");
         } else {
             //通用替换方式
-            s1 = element.toString().replaceAll("<.*?>", "");
+            s1 = element.toString().replaceAll("<br>", "\n");
+            s1 = s1.replaceAll("<.*?>", "");
         }
 
         s1 = s1.replaceAll("<!-- -->", "");
         s1 = s1.replaceAll("&lt;", "<");
         s1 = s1.replaceAll("&gt;", ">");
+        s1 = s1.replaceAll("&nbsp;", " ");
         StringBuilder sb = new StringBuilder();
         String[] split = s1.split("\n");
         for (String s2 : split) {

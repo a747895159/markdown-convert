@@ -16,8 +16,8 @@ public enum HostRuleEnum {
 
     CNBLOG("cnblogs.com", EleTagEnum.ID, "post_detail", true, " - 博客园"),
 
-    //微信  元素有待优化
-    WECHAT("mp.weixin.qq.com", EleTagEnum.ID, "img-content", true, null),
+    //微信  元素有待优化  js_content img-content
+    WECHAT("mp.weixin.qq.com", EleTagEnum.ID, "js_content", true, null),
 
     //ID方式支持多个元素,以|分割
     CTO_51("blog.51cto.com", EleTagEnum.ID, "markdownContent|container", true, "_51CTO博客"),

@@ -76,7 +76,7 @@ public class URL2MdHandler {
             content += "\n \n \n [原文地址](" + url + ") ";
 
             pair.setRight(content);
-            pair.setLeft(title);
+            pair.setLeft(title.replaceAll("\\\\","").replaceAll("/",""));
             return pair;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -109,7 +109,10 @@ public class URL2MdHandler {
                 // 图片标签显示
                 ele.getElementsByTag("img").forEach(e -> e.attr("src", e.attr("data-src")));
                 // 正文内容展示
-                ele.getElementById("js_content").attr("style", "visibility");
+                Element jsContent = ele.getElementById("js_content");
+                if (jsContent != null) {
+                    jsContent.attr("style", "visibility");
+                }
                 break;
             case BILIBILI:
                 ele.getElementsByTag("img").forEach(e -> e.attr("src", e.attr("data-src")));
