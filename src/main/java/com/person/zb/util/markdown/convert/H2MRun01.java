@@ -30,6 +30,6 @@ public class H2MRun01 {
         MutablePair<String, String> convert = URL2MdHandler.parse("https://blog.51cto.com/u_5634409/2343489");
         String title = convert.getLeft();
         String value = convert.getRight();
-        IOUtils.write(value, new FileOutputStream("C:\\Users\\zhoubin\\Desktop\\temp_111\\" + title + ".md"), "utf-8");
+        IOUtils.write(value, new FileOutputStream("D:\\data\\" + title + ".md"), "utf-8");
     }
 }
