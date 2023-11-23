@@ -132,13 +132,24 @@ public class URL2MdHandler {
             case JS:
                 ele.getElementsByTag("img").forEach(e -> e.attr("src", e.attr("data-original-src")));
                 break;
+            case ZH:
+                ele.getElementsByTag("img").forEach(e -> {
+                    String attr = e.attr("data-original");
+                    if (StringUtils.isNotBlank(attr)) {
+                        e.removeAttr("src");
+                        e.attr("src", attr);
+                    }
+                });
+                break;
             default:
 
         }
 
     }
 
-
+    /**
+     * 异步加载浏览器获取文本内容
+     */
     private static Document asyncHtml(String url) throws Exception {
         System.setProperty("webdriver.chrome.driver", "D:\\develop\\Tools\\chromedriver.exe");
         //引入谷歌驱动

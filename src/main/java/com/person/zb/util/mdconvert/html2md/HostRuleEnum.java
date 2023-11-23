@@ -26,7 +26,17 @@ public enum HostRuleEnum {
 
     JS("jianshu.com", EleTagEnum.TAG, "article", true, " - 简书"),
 
+    ZH("zhihu.com", EleTagEnum.TAG, "article", true, " - 知乎"),
+
+
+
     UNKNOWN("UNKNOWN", null, "body", true, null),
+
+
+
+    /*********************************以下网址都是异步浏览器加载内容*************************************************/
+
+    JRTT("toutiao.com", EleTagEnum.TAG, "article", false, "-今日头条"),
 
     MDNICE("mdnice.com", EleTagEnum.ID, "writing-content", false, " - mdnice 墨滴"),
 

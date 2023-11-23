@@ -20,8 +20,9 @@ public class H2MRun03 {
          * 异步文章
          * https://segmentfault.com/a/1190000018835760
          * https://www.mdnice.com/writing/2a53472ff62e47e78f4d8dc005e91be1
+         * https://www.toutiao.com/article/6730619165612179979
          */
-        MutablePair<String, String> convert = URL2MdHandler.parseHtml("https://segmentfault.com/a/1190000018835760", "");
+        MutablePair<String, String> convert = URL2MdHandler.parseHtml("https://www.toutiao.com/article/6730619165612179979", "");
         String title = convert.getLeft();
         String value = convert.getRight();
         IOUtils.write(value, new FileOutputStream("D:\\data\\" + title + ".md"), "utf-8");

@@ -356,7 +356,7 @@ public class MdConvertUtil {
     }
 
     private static void img(Element element, ArrayList<MDLine> lines) {
-        MDLine line = getLastLine(lines);
+        MDLine line = new MDLine(MDLine.MDLineType.None, 0, "");
 
         line.append("![");
         String alt = element.attr("alt");
@@ -382,6 +382,7 @@ public class MdConvertUtil {
             line.append("\"");
         }
         line.append(")");
+        lines.add(line);
     }
 
     private static void code(Element element, ArrayList<MDLine> lines) {
