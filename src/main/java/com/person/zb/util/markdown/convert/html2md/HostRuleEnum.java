@@ -23,7 +23,7 @@ public enum HostRuleEnum {
 
     BILIBILI("bilibili.com", EleTagEnum.CSS, "article-content", true, " - 哔哩哔哩"),
 
-    JS("jianshu.com", EleTagEnum.CSS, "article-content", true, " - 简书"),
+    JS("jianshu.com", EleTagEnum.TAG, "article", true, " - 简书"),
 
 
     UNKNOWN("UNKNOWN", null, "body", true, null),

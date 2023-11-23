@@ -28,7 +28,7 @@ public class H2MRun01 {
          * 异步文章 暂不支持
          * https://segmentfault.com/a/1190000018835760
          */
-        MutablePair<String, String> convert = URL2MdHandler.parseHtml("https://www.jianshu.com/p/1c16195e9a1b","");
+        MutablePair<String, String> convert = URL2MdHandler.parseHtml("https://thinkwon.blog.csdn.net/article/details/104397367","");
         String title = convert.getLeft();
         String value = convert.getRight();
         IOUtils.write(value, new FileOutputStream("D:\\data\\" + title + ".md"), "utf-8");

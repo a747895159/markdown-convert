@@ -11,6 +11,7 @@ public enum EleTagEnum {
      */
     ID("id"),
     CSS("css"),
+    TAG("tag"),
 
     ;
 

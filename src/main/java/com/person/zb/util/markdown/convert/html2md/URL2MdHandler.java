@@ -50,6 +50,8 @@ public class URL2MdHandler {
                     ele = doc.getElementById(ruleEnum.getEleTagVal());
                 } else if (Objects.equals(EleTagEnum.CSS, ruleEnum.getEleTag())) {
                     ele = doc.select("." + ruleEnum.getEleTagVal()).get(0);
+                } else if (Objects.equals(EleTagEnum.TAG, ruleEnum.getEleTag())) {
+                    ele = doc.getElementsByTag(ruleEnum.getEleTagVal()).get(0);
                 } else {
                     ele = doc.getElementsByTag(ruleEnum.getEleTagVal()).get(0);
                 }
@@ -57,7 +59,7 @@ public class URL2MdHandler {
             }
             //获取正文内容元素
             String content = MdConvertUtil.getTextContent(ele);
-            if (content.contains(CATALOG)) {
+            if (content != null && content.contains(CATALOG)) {
                 String[] split = content.split(CATALOG);
                 content = CATALOG + "\n[TOC]\n" + split[1];
             }

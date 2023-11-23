@@ -58,7 +58,7 @@ public class MdConvertUtil {
         return parseDocument(doc);
     }
 
-    public static String convertHtml(String html, String charset) throws IOException {
+    public static String convertHtml(String html, String charset) {
         Document doc = Jsoup.parse(html, charset);
 
         return parseDocument(doc);
@@ -80,7 +80,7 @@ public class MdConvertUtil {
         Document doc = cleaner.clean(dirtyDoc);
         doc.outputSettings().escapeMode(EscapeMode.xhtml);
 
-        if (!title.trim().equals("")) {
+        if (StringUtils.isNotBlank(title.trim())) {
             return "# " + title + "\n\n" + getTextContent(doc);
         } else {
             return getTextContent(doc);
@@ -88,11 +88,10 @@ public class MdConvertUtil {
     }
 
     public static String getTextContent(Element element) {
-        return getTextContent(element, false);
-    }
-
-    private static String getTextContent(Element element, boolean codeBlock) {
-        ArrayList<MDLine> lines = new ArrayList<MDLine>();
+        if (element == null) {
+            return null;
+        }
+        ArrayList<MDLine> lines = new ArrayList<>();
         String s1 = element.toString();
         if (s1.startsWith("<div class=\"toc\">")) {
             return CATALOG;
@@ -102,13 +101,9 @@ public class MdConvertUtil {
             if (child instanceof TextNode) {
                 TextNode textNode = (TextNode) child;
                 MDLine line = getLastLine(lines);
-                if (line.getContent().equals("")) {
+                if (StringUtils.isBlank(line.getContent())) {
                     if (!textNode.isBlank()) {
-                        if (codeBlock) {
-                            line.append(textNode.getWholeText().replaceAll("#", "/#").replaceAll("\\*", "/\\*"));
-                        } else {
-                            line.append(textNode.text().replaceAll("#", "/#").replaceAll("\\*", "/\\*"));
-                        }
+                        line.append(textNode.text().replaceAll("#", "/#").replaceAll("\\*", "/\\*"));
                     }
                 } else {
                     line.append(textNode.text().replaceAll("#", "/#").replaceAll("\\*", "/\\*"));
@@ -117,7 +112,6 @@ public class MdConvertUtil {
             } else if (child instanceof Element) {
                 Element childElement = (Element) child;
                 processElement(childElement, lines);
-            } else {
             }
         }
 
@@ -125,7 +119,7 @@ public class MdConvertUtil {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i).toString().trim();
-            if (line.equals("")) {
+            if (StringUtils.isBlank(line)) {
                 blankLines++;
             } else {
                 blankLines = 0;
@@ -168,37 +162,35 @@ public class MdConvertUtil {
         Tag tag = element.tag();
 
         String tagName = tag.getName();
-        if (tagName.equals("div")) {
+        if ("div".equals(tagName)) {
             div(element, lines);
-        } else if (tagName.equals("p")) {
+        } else if ("p".equals(tagName)) {
             p(element, lines);
-        } else if (tagName.equals("br")) {
+        } else if ("br".equals(tagName)) {
             br(lines);
         } else if (tagName.matches("^h[0-9]+$")) {
             h(element, lines);
-        } else if (tagName.equals("strong") || tagName.equals("b")) {
+        } else if ("strong".equals(tagName) || "b".equals(tagName)) {
             strong(element, lines);
-        } else if (tagName.equals("em")) {
+        } else if ("em".equals(tagName)) {
             em(element, lines);
-        } else if (tagName.equals("hr")) {
+        } else if ("hr".equals(tagName)) {
             hr(lines);
-        } else if (tagName.equals("a")) {
+        } else if ("a".equals(tagName)) {
             a(element, lines);
-        } else if (tagName.equals("img")) {
+        } else if ("img".equals(tagName)) {
             img(element, lines);
-        } else if (tagName.equals("code")) {
+        } else if ("code".equals(tagName) || "pre".equals(tagName)) {
             code(element, lines);
-        } else if (tagName.equals("ul")) {
+        } else if ("ul".equals(tagName)) {
             ul(element, lines);
-        } else if (tagName.equals("ol")) {
+        } else if ("ol".equals(tagName)) {
             ol(element, lines);
-        } else if (tagName.equals("li")) {
+        } else if ("li".equals(tagName)) {
             li(element, lines);
-        } else if (tagName.equals("pre")) {
-            code(element, lines);
-        } else if (tagName.equals("thead")) {
+        } else if ("thead".equals(tagName)) {
             thead(element, lines);
-        } else if (tagName.equals("tbody")) {
+        } else if ("tbody".equals(tagName)) {
             tbody(element, lines);
         } else {
             MDLine line = getLastLine(lines);
@@ -222,35 +214,17 @@ public class MdConvertUtil {
     private static void div(Element element, ArrayList<MDLine> lines) {
         MDLine line = getLastLine(lines);
         String content = getTextContent(element);
-        if (!content.equals("")) {
-            if (!line.getContent().trim().equals("")) {
+        if (StringUtils.isNotBlank(content)) {
+            if (StringUtils.isNotBlank(line.getContent().trim())) {
                 lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
                 lines.add(new MDLine(MDLine.MDLineType.None, 0, content));
                 lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
             } else {
-                if (!content.trim().equals("")) {
+                if (StringUtils.isNotBlank(content.trim())) {
                     line.append(content);
                 }
             }
         }
-    }
-
-    private static void table(Element element, ArrayList<MDLine> lines) {
-        String tableStr = element.toString();
-        List<Node> children = element.childNodes();
-        for (Node child : children) {
-            if (child instanceof Element) {
-                Element childElement = (Element) child;
-                String tagName = childElement.tagName();
-                if (tagName.equals("thead")) {
-                    thead(element, lines);
-                }
-                if (tagName.equals("tbody")) {
-                    thead(element, lines);
-                }
-            }
-        }
-        System.out.println(tableStr);
     }
 
     private static void thead(Element element, ArrayList<MDLine> lines) {
@@ -301,31 +275,31 @@ public class MdConvertUtil {
 
     private static void p(Element element, ArrayList<MDLine> lines) {
         MDLine line = getLastLine(lines);
-        if (!line.getContent().trim().equals("")) {
+        if (StringUtils.isNotBlank(line.getContent().trim())) {
             lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
         }
         lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
         lines.add(new MDLine(MDLine.MDLineType.None, 0, getTextContent(element).replaceAll("&nbsp;", "")));
         lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
-        if (!line.getContent().trim().equals("")) {
+        if (StringUtils.isNotBlank(line.getContent().trim())) {
             lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
         }
     }
 
     private static void br(ArrayList<MDLine> lines) {
         MDLine line = getLastLine(lines);
-        if (!line.getContent().trim().equals("")) {
+        if (StringUtils.isNotBlank(line.getContent().trim())) {
             lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
         }
     }
 
     private static void h(Element element, ArrayList<MDLine> lines) {
         MDLine line = getLastLine(lines);
-        if (!line.getContent().trim().equals("")) {
+        if (StringUtils.isNotBlank(line.getContent().trim())) {
             lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
         }
 
-        int level = Integer.valueOf(element.tagName().substring(1));
+        int level = Integer.parseInt(element.tagName().substring(1));
         switch (level) {
             case 1:
                 lines.add(new MDLine(MDLine.MDLineType.Head1, 0, getTextContent(element)));
@@ -371,7 +345,7 @@ public class MdConvertUtil {
         String url = element.attr("href");
         line.append(url);
         String title = element.attr("title");
-        if (!title.equals("")) {
+        if (StringUtils.isNotBlank(title)) {
             line.append(" \"");
             line.append(title);
             line.append("\"");
@@ -391,9 +365,16 @@ public class MdConvertUtil {
         if (StringUtils.isBlank(url)) {
             url = element.attr("data-src");
         }
+        //简书取图片方式
+        if (StringUtils.isBlank(url)) {
+            url = element.attr("data-original-src");
+        }
+        if (!url.startsWith("http")) {
+            url = "https:" + url;
+        }
         line.append(url);
         String title = element.attr("title");
-        if (!title.equals("")) {
+        if (StringUtils.isNotBlank(title)) {
             line.append(" \"");
             line.append(title);
             line.append("\"");
