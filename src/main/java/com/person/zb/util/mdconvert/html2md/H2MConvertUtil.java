@@ -20,6 +20,7 @@ import java.util.List;
 
 /**
  * html转换Md工具类
+ *
  * @author : ZhouBin
  */
 public class H2MConvertUtil {
@@ -77,6 +78,9 @@ public class H2MConvertUtil {
         indentation = -1;
 
         String title = dirtyDoc.title();
+
+        /*Whitelist whitelist = Whitelist.relaxed();
+        Cleaner cleaner = new Cleaner(whitelist);*/
 
         Safelist safelist = Safelist.relaxed();
         Cleaner cleaner = new Cleaner(safelist);
