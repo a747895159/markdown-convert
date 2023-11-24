@@ -99,16 +99,38 @@
         </dependency>
 
 
-        <!-- <dependency>
-             <groupId>org.pegdown</groupId>
-             <artifactId>pegdown</artifactId>
-             <version>1.4.2</version>
-         </dependency>-->
+        <!--<dependency>
+            <groupId>org.pegdown</groupId>
+            <artifactId>pegdown</artifactId>
+            <version>1.4.2</version>
+        </dependency>-->
         <!-- <dependency>
              <groupId>com.vladsch.flexmark</groupId>
              <artifactId>flexmark-html2md-converter</artifactId>
              <version>0.62.2</version>
          </dependency>-->
+
+
+        <!--引入Markdown转HTML的插件-->
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>0.17.0</version>
+        </dependency>
+
+        <!--扩展 标题-->
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark-ext-heading-anchor</artifactId>
+            <version>0.17.0</version>
+        </dependency>
+
+        <!--扩展 表格-->
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark-ext-gfm-tables</artifactId>
+            <version>0.17.0</version>
+        </dependency>
 
 
     </dependencies>

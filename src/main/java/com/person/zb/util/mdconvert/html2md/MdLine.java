@@ -1,17 +1,20 @@
 package com.person.zb.util.mdconvert.html2md;
 
-public class MDLine {
-    private int level = 0;
+/**
+ * @author : ZhouBin
+ */
+public class MdLine {
+    private int level;
     private MDLineType type;
-    private StringBuilder content;
+    private final StringBuilder content;
 
-    public MDLine(MDLineType type, int level, String content) {
+    public MdLine(MDLineType type, int level, String content) {
         this.type = type;
         this.level = level;
         this.content = new StringBuilder(content);
     }
 
-    public MDLine create(String line) {
+    public MdLine create(String line) {
         int spaces = 0;
         while ((spaces < line.length()) && (line.charAt(spaces) == ' ')) {
             spaces++;
@@ -26,9 +29,9 @@ public class MDLine {
                 while ((c < content.length()) && (Character.isDigit(content.charAt(c)))) {
                     c++;
                 }
-                return new MDLine(MDLineType.Ordered, newLevel, content.substring(c + 2));
-            } else if (content.matches("^(\\*|\\+|\\-)\\s.*")) {
-                return new MDLine(MDLineType.Unordered, newLevel, content.substring(2));
+                return new MdLine(MDLineType.Ordered, newLevel, content.substring(c + 2));
+            } else if (content.matches("^([*+\\-])\\s.*")) {
+                return new MdLine(MDLineType.Unordered, newLevel, content.substring(2));
             } else if (content.matches("^[#]+.*")) {
                 int c = 0;
                 while ((c < content.length()) && (content.charAt(c) == '#')) {
@@ -51,13 +54,13 @@ public class MDLine {
                     c++;
                 }
 
-                return new MDLine(headerType, newLevel, content.substring(c));
+                return new MdLine(headerType, newLevel, content.substring(c));
             }
         }
 
         content = line.substring(4 * newLevel);
 
-        return new MDLine(MDLineType.None, newLevel, content);
+        return new MdLine(MDLineType.None, newLevel, content);
     }
 
     public MDLineType getListTypeName() {
@@ -80,7 +83,7 @@ public class MDLine {
         }
 
         if (type.equals(MDLineType.Ordered)) {
-            newLine.append(String.valueOf(1)).append(". ");
+            newLine.append(1).append(". ");
         } else if (type.equals(MDLineType.Unordered)) {
             newLine.append("* ");
         } else if (type.equals(MDLineType.Head1)) {
@@ -116,7 +119,7 @@ public class MDLine {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof MDLine && ((MDLine) o).type.equals(this.type);
+        return o instanceof MdLine && ((MdLine) o).type.equals(this.type);
     }
 
     public boolean isList() {
@@ -128,6 +131,9 @@ public class MDLine {
     }
 
     public enum MDLineType {
+        /**
+         *
+         */
         Ordered, Unordered, None, Head1, Head2, Head3, HR
     }
 }

@@ -5,6 +5,10 @@ import lombok.Getter;
 
 import java.util.Arrays;
 
+/**
+ * 请求URL解析规则配置类
+ * @author : ZhouBin
+ */
 @Getter
 @AllArgsConstructor
 public enum HostRuleEnum {
@@ -29,9 +33,7 @@ public enum HostRuleEnum {
     ZH("zhihu.com", EleTagEnum.TAG, "article", true, " - 知乎"),
 
 
-
     UNKNOWN("UNKNOWN", null, "body", true, null),
-
 
 
     /*********************************以下网址都是异步浏览器加载内容*************************************************/

@@ -1,7 +1,8 @@
 package com.person.zb.util.mdconvert;
 
 
-import com.person.zb.util.mdconvert.html2md.URL2MdHandler;
+import com.person.zb.util.mdconvert.html2md.HtmlHandlerUtil;
+import com.person.zb.util.mdconvert.uodo.MarkdownToHtmlUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 
@@ -25,9 +26,13 @@ public class H2MRun01 {
          * https://zhuanlan.zhihu.com/p/590236713
          *
          */
-        MutablePair<String, String> convert = URL2MdHandler.parseHtml("https://zhuanlan.zhihu.com/p/590236713", "");
+        MutablePair<String, String> convert = HtmlHandlerUtil.parseHtml("https://zhuanlan.zhihu.com/p/590236713", "");
         String title = convert.getLeft();
         String value = convert.getRight();
         IOUtils.write(value, new FileOutputStream("D:\\data\\" + title + ".md"), "utf-8");
+
+        //TODO 半成品生成HTMl，效果不太好
+        String htmlContent = MarkdownToHtmlUtils.markdownToHtmlExtensions(value);
+        IOUtils.write(htmlContent, new FileOutputStream("D:\\data\\" + title + ".html"), "utf-8");
     }
 }

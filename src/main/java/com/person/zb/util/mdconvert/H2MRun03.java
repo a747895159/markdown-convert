@@ -1,7 +1,7 @@
 package com.person.zb.util.mdconvert;
 
 
-import com.person.zb.util.mdconvert.html2md.URL2MdHandler;
+import com.person.zb.util.mdconvert.html2md.HtmlHandlerUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 
@@ -22,7 +22,7 @@ public class H2MRun03 {
          * https://www.mdnice.com/writing/2a53472ff62e47e78f4d8dc005e91be1
          * https://www.toutiao.com/article/6730619165612179979
          */
-        MutablePair<String, String> convert = URL2MdHandler.parseHtml("https://www.toutiao.com/article/6730619165612179979", "");
+        MutablePair<String, String> convert = HtmlHandlerUtil.parseHtml("https://www.toutiao.com/article/6730619165612179979", "");
         String title = convert.getLeft();
         String value = convert.getRight();
         IOUtils.write(value, new FileOutputStream("D:\\data\\" + title + ".md"), "utf-8");

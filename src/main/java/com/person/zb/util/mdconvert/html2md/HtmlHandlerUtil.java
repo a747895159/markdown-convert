@@ -15,9 +15,11 @@ import java.net.URL;
 import java.util.Objects;
 
 /**
+ * 请求url页面处理工具类
+ *
  * @author : ZhouBin
  */
-public class URL2MdHandler {
+public class HtmlHandlerUtil {
 
     public static final String CATALOG = "## 文章目录";
 
@@ -42,7 +44,7 @@ public class URL2MdHandler {
         try {
             MutablePair<String, String> pair = new MutablePair<>();
             // 获取正文内容，
-            Document doc = null;
+            Document doc;
             if (BooleanUtils.isTrue(ruleEnum.getSyncFlag())) {
                 // 获取正文内容，
                 doc = Jsoup.parse(new URL(url), 5000);
@@ -54,7 +56,7 @@ public class URL2MdHandler {
             String title;
             Element ele = null;
             if (StringUtils.isNotBlank(eleId)) {
-                title = MdConvertUtil.fetchTitle(doc);
+                title = H2MConvertUtil.fetchTitle(doc);
                 ele = doc.getElementById(eleId);
             } else {
                 title = getTitle(doc, ruleEnum.getTitleSplit());
@@ -80,7 +82,7 @@ public class URL2MdHandler {
                 handlerWebSite(ruleEnum, ele);
             }
             //获取正文内容元素
-            String content = MdConvertUtil.getTextContent(ele);
+            String content = H2MConvertUtil.getTextContent(ele);
             if (content != null && content.contains(CATALOG)) {
                 String[] split = content.split(CATALOG);
                 content = CATALOG + "\n[TOC]\n" + split[1];
@@ -97,7 +99,7 @@ public class URL2MdHandler {
 
 
     public static String getTitle(Document doc, String titleSplit) {
-        String title = MdConvertUtil.fetchTitle(doc);
+        String title = H2MConvertUtil.fetchTitle(doc);
         if (StringUtils.isNotBlank(title) && StringUtils.isNotBlank(titleSplit)) {
             return title.split(titleSplit)[0];
         }

@@ -1,7 +1,7 @@
 package com.person.zb.util.mdconvert;
 
 
-import com.person.zb.util.mdconvert.html2md.MdConvertUtil;
+import com.person.zb.util.mdconvert.html2md.H2MConvertUtil;
 import org.apache.commons.io.IOUtils;
 
 import java.io.FileOutputStream;
@@ -13,7 +13,7 @@ public class H2MRun02 {
 
     public static void main(String[] args) throws Exception {
 
-        String value = MdConvertUtil.convertHtml(htmlContent(), "utf-8");
+        String value = H2MConvertUtil.convertHtml(htmlContent(), "utf-8");
         IOUtils.write(value, new FileOutputStream("D:\\data\\" + "内容测试" + ".md"), "utf-8");
     }
 

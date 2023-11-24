@@ -9,7 +9,7 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.parser.Tag;
 import org.jsoup.safety.Cleaner;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.jsoup.select.Elements;
 
 import java.io.File;
@@ -18,7 +18,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MdConvertUtil {
+/**
+ * html转换Md工具类
+ * @author : ZhouBin
+ */
+public class H2MConvertUtil {
 
     public static final String CATALOG = "## 文章目录";
     private static int indentation = -1;
@@ -46,8 +50,8 @@ public class MdConvertUtil {
     }
 
 
-    public static String convert(String theHTML, String baseURL) {
-        Document doc = Jsoup.parse(theHTML, baseURL);
+    public static String convert(String theHtml, String baseUrl) {
+        Document doc = Jsoup.parse(theHtml, baseUrl);
 
         return parseDocument(doc);
     }
@@ -74,8 +78,8 @@ public class MdConvertUtil {
 
         String title = dirtyDoc.title();
 
-        Whitelist whitelist = Whitelist.relaxed();
-        Cleaner cleaner = new Cleaner(whitelist);
+        Safelist safelist = Safelist.relaxed();
+        Cleaner cleaner = new Cleaner(safelist);
 
         Document doc = cleaner.clean(dirtyDoc);
         doc.outputSettings().escapeMode(EscapeMode.xhtml);
@@ -91,7 +95,7 @@ public class MdConvertUtil {
         if (element == null) {
             return null;
         }
-        ArrayList<MDLine> lines = new ArrayList<>();
+        ArrayList<MdLine> lines = new ArrayList<>();
         String s1 = element.toString();
         if (s1.startsWith("<div class=\"toc\">")) {
             return CATALOG;
@@ -100,7 +104,7 @@ public class MdConvertUtil {
         for (Node child : children) {
             if (child instanceof TextNode) {
                 TextNode textNode = (TextNode) child;
-                MDLine line = getLastLine(lines);
+                MdLine line = getLastLine(lines);
                 if (StringUtils.isBlank(line.getContent())) {
                     if (!textNode.isBlank()) {
                         line.append(textNode.text().replaceAll("#", "/#").replaceAll("\\*", "/\\*"));
@@ -160,7 +164,7 @@ public class MdConvertUtil {
         return sb.toString();
     }
 
-    private static void processElement(Element element, ArrayList<MDLine> lines) {
+    private static void processElement(Element element, ArrayList<MdLine> lines) {
         Tag tag = element.tag();
 
         String tagName = tag.getName();
@@ -195,32 +199,32 @@ public class MdConvertUtil {
         } else if ("tbody".equals(tagName)) {
             tbody(element, lines);
         } else {
-            MDLine line = getLastLine(lines);
+            MdLine line = getLastLine(lines);
             line.append(getTextContent(element));
         }
     }
 
 
-    private static MDLine getLastLine(ArrayList<MDLine> lines) {
-        MDLine line;
+    private static MdLine getLastLine(ArrayList<MdLine> lines) {
+        MdLine line;
         if (lines.size() > 0) {
             line = lines.get(lines.size() - 1);
         } else {
-            line = new MDLine(MDLine.MDLineType.None, 0, "");
+            line = new MdLine(MdLine.MDLineType.None, 0, "");
             lines.add(line);
         }
 
         return line;
     }
 
-    private static void div(Element element, ArrayList<MDLine> lines) {
-        MDLine line = getLastLine(lines);
+    private static void div(Element element, ArrayList<MdLine> lines) {
+        MdLine line = getLastLine(lines);
         String content = getTextContent(element);
         if (StringUtils.isNotBlank(content)) {
             if (StringUtils.isNotBlank(line.getContent().trim())) {
-                lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
-                lines.add(new MDLine(MDLine.MDLineType.None, 0, content));
-                lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
+                lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
+                lines.add(new MdLine(MdLine.MDLineType.None, 0, content));
+                lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
             } else {
                 if (StringUtils.isNotBlank(content.trim())) {
                     line.append(content);
@@ -229,7 +233,7 @@ public class MdConvertUtil {
         }
     }
 
-    private static void thead(Element element, ArrayList<MDLine> lines) {
+    private static void thead(Element element, ArrayList<MdLine> lines) {
         List<Node> children = element.childNodes();
         for (Node child : children) {
             if (child instanceof Element) {
@@ -239,7 +243,7 @@ public class MdConvertUtil {
         }
     }
 
-    private static void tbody(Element element, ArrayList<MDLine> lines) {
+    private static void tbody(Element element, ArrayList<MdLine> lines) {
         List<Node> children = element.childNodes();
         for (Node child : children) {
             if (child instanceof Element) {
@@ -249,7 +253,7 @@ public class MdConvertUtil {
         }
     }
 
-    private static void tr(Element element, ArrayList<MDLine> lines, boolean appendFlag) {
+    private static void tr(Element element, ArrayList<MdLine> lines, boolean appendFlag) {
         List<Node> childrenList = element.childNodes();
         StringBuilder sb = new StringBuilder();
         for (Node node : childrenList) {
@@ -270,76 +274,76 @@ public class MdConvertUtil {
                 sb.append("|");
             }
 
-            MDLine line = new MDLine(MDLine.MDLineType.None, 0, sb.toString());
+            MdLine line = new MdLine(MdLine.MDLineType.None, 0, sb.toString());
             lines.add(line);
         }
     }
 
-    private static void p(Element element, ArrayList<MDLine> lines) {
-        MDLine line = getLastLine(lines);
+    private static void p(Element element, ArrayList<MdLine> lines) {
+        MdLine line = getLastLine(lines);
         if (StringUtils.isNotBlank(line.getContent().trim())) {
-            lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
+            lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
         }
-        lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
-        lines.add(new MDLine(MDLine.MDLineType.None, 0, getTextContent(element).replaceAll("&nbsp;", "")));
-        lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
+        lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
+        lines.add(new MdLine(MdLine.MDLineType.None, 0, getTextContent(element).replaceAll("&nbsp;", "")));
+        lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
         if (StringUtils.isNotBlank(line.getContent().trim())) {
-            lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
-        }
-    }
-
-    private static void br(ArrayList<MDLine> lines) {
-        MDLine line = getLastLine(lines);
-        if (StringUtils.isNotBlank(line.getContent().trim())) {
-            lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
+            lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
         }
     }
 
-    private static void h(Element element, ArrayList<MDLine> lines) {
-        MDLine line = getLastLine(lines);
+    private static void br(ArrayList<MdLine> lines) {
+        MdLine line = getLastLine(lines);
         if (StringUtils.isNotBlank(line.getContent().trim())) {
-            lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
+            lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
+        }
+    }
+
+    private static void h(Element element, ArrayList<MdLine> lines) {
+        MdLine line = getLastLine(lines);
+        if (StringUtils.isNotBlank(line.getContent().trim())) {
+            lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
         }
 
         int level = Integer.parseInt(element.tagName().substring(1));
         switch (level) {
             case 1:
-                lines.add(new MDLine(MDLine.MDLineType.Head1, 0, getTextContent(element)));
+                lines.add(new MdLine(MdLine.MDLineType.Head1, 0, getTextContent(element)));
                 break;
             case 2:
-                lines.add(new MDLine(MDLine.MDLineType.Head2, 0, getTextContent(element)));
+                lines.add(new MdLine(MdLine.MDLineType.Head2, 0, getTextContent(element)));
                 break;
             default:
-                lines.add(new MDLine(MDLine.MDLineType.Head3, 0, getTextContent(element)));
+                lines.add(new MdLine(MdLine.MDLineType.Head3, 0, getTextContent(element)));
                 break;
         }
 
-        lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
-        lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
+        lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
+        lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
     }
 
-    private static void strong(Element element, ArrayList<MDLine> lines) {
-        MDLine line = getLastLine(lines);
+    private static void strong(Element element, ArrayList<MdLine> lines) {
+        MdLine line = getLastLine(lines);
         line.append("**");
         line.append(getTextContent(element));
         line.append("** ");
     }
 
-    private static void em(Element element, ArrayList<MDLine> lines) {
-        MDLine line = getLastLine(lines);
+    private static void em(Element element, ArrayList<MdLine> lines) {
+        MdLine line = getLastLine(lines);
         line.append("*");
         line.append(getTextContent(element));
         line.append("*");
     }
 
-    private static void hr(ArrayList<MDLine> lines) {
-        lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
-        lines.add(new MDLine(MDLine.MDLineType.HR, 0, ""));
-        lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
+    private static void hr(ArrayList<MdLine> lines) {
+        lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
+        lines.add(new MdLine(MdLine.MDLineType.HR, 0, ""));
+        lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
     }
 
-    private static void a(Element element, ArrayList<MDLine> lines) {
-        MDLine line = getLastLine(lines);
+    private static void a(Element element, ArrayList<MdLine> lines) {
+        MdLine line = getLastLine(lines);
         line.append("[");
         line.append(getTextContent(element));
         line.append("]");
@@ -355,8 +359,8 @@ public class MdConvertUtil {
         line.append(")");
     }
 
-    private static void img(Element element, ArrayList<MDLine> lines) {
-        MDLine line = new MDLine(MDLine.MDLineType.None, 0, "");
+    private static void img(Element element, ArrayList<MdLine> lines) {
+        MdLine line = new MdLine(MdLine.MDLineType.None, 0, "");
 
         line.append("![");
         String alt = element.attr("alt");
@@ -385,69 +389,69 @@ public class MdConvertUtil {
         lines.add(line);
     }
 
-    private static void code(Element element, ArrayList<MDLine> lines) {
+    private static void code(Element element, ArrayList<MdLine> lines) {
 
         String codeContent = getCodeContent(element).replace("/#", "#");
         String code = codeContent.trim();
         if (code.contains("\n")) {
-            lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
-            MDLine line = new MDLine(MDLine.MDLineType.None, 0, "    ");
-            code = "```\n" + code + "\n```";
+            lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
+            MdLine line = new MdLine(MdLine.MDLineType.None, 0, "    ");
+            code = "```java\n" + code + "\n```";
             line.append(code);
             lines.add(line);
-            lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
+            lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
         } else {
-            MDLine line = getLastLine(lines);
+            MdLine line = getLastLine(lines);
             code = "`" + code + "`";
             line.append(code);
         }
     }
 
-    private static void ul(Element element, ArrayList<MDLine> lines) {
-        lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
+    private static void ul(Element element, ArrayList<MdLine> lines) {
+        lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
         indentation++;
         orderedList = false;
-        MDLine line = new MDLine(MDLine.MDLineType.None, 0, "");
+        MdLine line = new MdLine(MdLine.MDLineType.None, 0, "");
         line.append(getTextContent(element));
         lines.add(line);
         indentation--;
-        lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
+        lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
     }
 
-    private static void ol(Element element, ArrayList<MDLine> lines) {
-        lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
+    private static void ol(Element element, ArrayList<MdLine> lines) {
+        lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
         indentation++;
         orderedList = true;
-        MDLine line = new MDLine(MDLine.MDLineType.None, 0, "");
+        MdLine line = new MdLine(MdLine.MDLineType.None, 0, "");
         line.append(getTextContent(element));
         lines.add(line);
         indentation--;
-        lines.add(new MDLine(MDLine.MDLineType.None, 0, ""));
+        lines.add(new MdLine(MdLine.MDLineType.None, 0, ""));
     }
 
-    private static void li(Element element, ArrayList<MDLine> lines) {
-        MDLine line;
+    private static void li(Element element, ArrayList<MdLine> lines) {
+        MdLine line;
         if (orderedList) {
-            line = new MDLine(MDLine.MDLineType.Ordered, indentation,
+            line = new MdLine(MdLine.MDLineType.Ordered, indentation,
                     getTextContent(element));
         } else {
-            line = new MDLine(MDLine.MDLineType.Unordered, indentation,
+            line = new MdLine(MdLine.MDLineType.Unordered, indentation,
                     getTextContent(element));
         }
         lines.add(line);
     }
 
-    private static void pre(Element element, ArrayList<MDLine> lines) {
+    private static void pre(Element element, ArrayList<MdLine> lines) {
         Elements pre = element.select("pre");
         for (Element item : pre) {
             Elements code = item.children();
             for (Element child : code) {
                 processElement(child, lines);
             }
-            MDLine line = new MDLine(MDLine.MDLineType.None, 0, "");
+            MdLine line = new MdLine(MdLine.MDLineType.None, 0, "");
             line.append("");
             lines.add(line);
-            lines.add(new MDLine(MDLine.MDLineType.None, 0, "\n\t"));
+            lines.add(new MdLine(MdLine.MDLineType.None, 0, "\n\t"));
         }
 
     }
