@@ -1,16 +1,11 @@
 package com.person.zb.util.mdconvert.html2md;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.Arrays;
 
 /**
  * 请求URL解析规则配置类
  * @author : ZhouBin
  */
-@Getter
-@AllArgsConstructor
 public enum HostRuleEnum {
 
     /**
@@ -72,7 +67,37 @@ public enum HostRuleEnum {
     private final String titleSplit;
 
 
+    HostRuleEnum(String host, EleTagEnum eleTag, String eleTagVal, Boolean syncFlag, String titleSplit) {
+        this.host = host;
+        this.eleTag = eleTag;
+        this.eleTagVal = eleTagVal;
+        this.syncFlag = syncFlag;
+        this.titleSplit = titleSplit;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public EleTagEnum getEleTag() {
+        return eleTag;
+    }
+
+    public String getEleTagVal() {
+        return eleTagVal;
+    }
+
+    public Boolean getSyncFlag() {
+        return syncFlag;
+    }
+
+    public String getTitleSplit() {
+        return titleSplit;
+    }
+
     public static HostRuleEnum findHost(String url) {
         return Arrays.stream(HostRuleEnum.values()).filter(t -> url.contains(t.getHost())).findFirst().orElse(UNKNOWN);
     }
+
+
 }

@@ -1,10 +1,6 @@
 package com.person.zb.util.mdconvert.html2md;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
 public enum EleTagEnum {
     /**
      *
@@ -16,4 +12,12 @@ public enum EleTagEnum {
     ;
 
     private final String code;
+
+    EleTagEnum(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
 }

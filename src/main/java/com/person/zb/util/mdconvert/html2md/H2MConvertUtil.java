@@ -9,7 +9,7 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.parser.Tag;
 import org.jsoup.safety.Cleaner;
-import org.jsoup.safety.Safelist;
+import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 import java.io.File;
@@ -78,12 +78,8 @@ public class H2MConvertUtil {
         indentation = -1;
 
         String title = dirtyDoc.title();
-
-        /*Whitelist whitelist = Whitelist.relaxed();
-        Cleaner cleaner = new Cleaner(whitelist);*/
-
-        Safelist safelist = Safelist.relaxed();
-        Cleaner cleaner = new Cleaner(safelist);
+        Whitelist whitelist = Whitelist.relaxed();
+        Cleaner cleaner = new Cleaner(whitelist);
 
         Document doc = cleaner.clean(dirtyDoc);
         doc.outputSettings().escapeMode(EscapeMode.xhtml);
@@ -242,7 +238,7 @@ public class H2MConvertUtil {
         for (Node child : children) {
             if (child instanceof Element) {
                 Element childElement = (Element) child;
-                tr(childElement, lines, true);
+                tr(childElement, lines);
             }
         }
     }
@@ -252,23 +248,24 @@ public class H2MConvertUtil {
         for (Node child : children) {
             if (child instanceof Element) {
                 Element childElement = (Element) child;
-                tr(childElement, lines, false);
+                tr(childElement, lines);
             }
         }
     }
 
-    private static void tr(Element element, ArrayList<MdLine> lines, boolean appendFlag) {
+    private static void tr(Element element, ArrayList<MdLine> lines) {
         List<Node> childrenList = element.childNodes();
         StringBuilder sb = new StringBuilder();
-        for (Node node : childrenList) {
-            if (node instanceof Element) {
-                Element childElement = (Element) node;
-                sb.append("|").append(getTextContent(childElement));
+        //如果上一条记录不是 tr类型的，则新增TR 并追加 |---|----|
+        if (getLastLine(lines).getListTypeName() != MdLine.MDLineType.TR) {
+            for (Node node : childrenList) {
+                if (node instanceof Element) {
+                    Element childElement = (Element) node;
+                    sb.append("|").append(getTextContent(childElement).trim().replaceAll("\n",""));
+                }
             }
-        }
-        if (sb.length() > 0) {
-            sb.append("|");
-            if (appendFlag) {
+            if (sb.length() > 0) {
+                sb.append("|");
                 sb.append("\n");
                 for (Node node : childrenList) {
                     if (node instanceof Element) {
@@ -276,11 +273,23 @@ public class H2MConvertUtil {
                     }
                 }
                 sb.append("|");
+                MdLine line = new MdLine(MdLine.MDLineType.TR, 0, sb.toString());
+                lines.add(line);
             }
-
-            MdLine line = new MdLine(MdLine.MDLineType.None, 0, sb.toString());
-            lines.add(line);
+        } else {
+            for (Node node : childrenList) {
+                if (node instanceof Element) {
+                    Element childElement = (Element) node;
+                    sb.append("|").append(getTextContent(childElement).trim().replaceAll("\n",""));
+                }
+            }
+            if (sb.length() > 0) {
+                sb.append("|");
+                MdLine line = new MdLine(MdLine.MDLineType.TR, 0, sb.toString());
+                lines.add(line);
+            }
         }
+
     }
 
     private static void p(Element element, ArrayList<MdLine> lines) {
